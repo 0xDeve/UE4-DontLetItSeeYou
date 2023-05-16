@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "PickupActor.h"
 #include "PickupBattery.generated.h"
 
 UCLASS()
-class DONTLETHIMSEEYOU_API APickupBattery : public AActor
+class DONTLETHIMSEEYOU_API APickupBattery : public APickupActor
 {
 	GENERATED_BODY()
 	
@@ -21,17 +21,15 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/** Return the mesh for the pickup */
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return PickupMesh; }
+	// ~APickupActor interface
+	void OnPickup_Implementation(class ADontLetHimSeeYouCharacter* InInteractor) override;
+
 	/** Return whether or not pickup is active */
 	UFUNCTION(BlueprintPure, Category = "Pickup battery")
 		bool IsActive();
 	/** Allow other classes to safely change whether pickup is active or not */
 	UFUNCTION(BlueprintCallable, Category = "Pickup battery")
 		void SetActive(bool PickupState);
-	// Pickup mesh
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup battery")
-		class UStaticMeshComponent* PickupMesh;
 	UFUNCTION(BlueprintNativeEvent)
 		void WasCollected();
 	virtual void WasCollected_Implementation();

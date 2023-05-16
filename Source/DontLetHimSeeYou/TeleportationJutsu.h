@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "PickupActor.h"
 #include "TeleportationJutsu.generated.h"
 
 UCLASS()
-class DONTLETHIMSEEYOU_API ATeleportationJutsu : public AActor
+class DONTLETHIMSEEYOU_API ATeleportationJutsu : public APickupActor
 {
 	GENERATED_BODY()
 	
@@ -19,6 +19,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void OnPickup_Implementation(class ADontLetHimSeeYouCharacter* InInteractor) override;
+
+	UPROPERTY(EditAnywhere, Category = "Teleport points")
+		TSubclassOf<AActor> ClassToFind;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Teleport points")
+		TArray<AActor*> TeleportPoints;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

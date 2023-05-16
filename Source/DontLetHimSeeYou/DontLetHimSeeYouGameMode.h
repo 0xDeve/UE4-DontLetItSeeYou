@@ -21,11 +21,22 @@ public:
 		TSubclassOf <class ASpawnPoints> SpawnPoints_C;
 	UPROPERTY(EditDefaultsOnly, Category = "Spawn points")
 		TSubclassOf<class APedo> PedoToSpawn_C;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	int32 MaxMonsters = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		float SpawnRate = 10;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Settings")
+	int32 CurrentMonsters;
 private:
+	UPROPERTY()
 	TArray<AActor*> SpawnPoints;
-	int32 maxPedos = 2;
-	int32 currentPedos;
-	void SpawnPedos(int32 Index);
+
+	void SpawnMonsters();
+
+	FTimerHandle SpawnHandle;
 };
 
 

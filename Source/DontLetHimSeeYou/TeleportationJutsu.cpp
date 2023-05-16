@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TeleportationJutsu.h"
-
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATeleportationJutsu::ATeleportationJutsu()
@@ -16,6 +16,12 @@ void ATeleportationJutsu::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ATeleportationJutsu::OnPickup_Implementation(class ADontLetHimSeeYouCharacter* InInteractor)
+{	
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, TeleportPoints);
+	Super::OnPickup_Implementation(InInteractor);
 }
 
 // Called every frame

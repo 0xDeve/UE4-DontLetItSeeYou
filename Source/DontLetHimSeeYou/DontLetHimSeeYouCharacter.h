@@ -39,9 +39,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 		FText CharacterName;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/** Check if runner is dead */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-		bool bisDead;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attributes")
+		int32 MaxSkills = 3;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Attributes")
+	int32 CurrentSkills;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<class APickupActor*> PickedUpActors;
+
 	/** Increase battery energy */
 	void IncreaseBattery(float BatteryEnergy);
 	/** Getter bisSprint */
@@ -52,6 +59,10 @@ public:
 	void set_bIsOn();
 	/**Tick */
 	virtual void Tick(float DeltaTime) override;
+
+	void AddItemToInventory(APickupActor* InPickupActor);
+
+	void RemoveItemFromInventory(APickupActor* InItem);
 protected:
 	/** Check if flashlight is on */
 	bool bisOn = false;

@@ -56,7 +56,7 @@ void ASpawnVolume::SpawnPickup()
 		if (World) {
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
-			SpawnParams.Instigator = Instigator;
+			SpawnParams.Instigator = GetInstigator();
 
 			// Get a random location 
 			FVector RandomLocation = GetRandomPointsInVolume();
@@ -84,7 +84,7 @@ void ASpawnVolume::SpawnSkill()
 	if (World) {
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
-		SpawnParams.Instigator = Instigator;
+		SpawnParams.Instigator = GetInstigator();
 
 		// Get a random location 
 		FVector RandomLocation = GetRandomPointsInVolume();

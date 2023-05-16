@@ -19,7 +19,6 @@ EBTNodeResult::Type UMoveToBTTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	if (FMath::Abs((AILocation - PlayerLocation).Size()) < 250) {
 		// If distance between AI and runner < 8 then destroy runner
 		//PlayerActor->Destroy();
-		PlayerActor->bisDead = true;
 	}
 	return EBTNodeResult::Succeeded;
 }

@@ -21,29 +21,24 @@ ADontLetHimSeeYouGameMode::ADontLetHimSeeYouGameMode()
 void ADontLetHimSeeYouGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (currentPedos < 2) {
-		for (int32 i = currentPedos; i < maxPedos; i++)
-			SpawnPedos(i);
-	}
-		// TODO Spawn pedo to match
 }
 
 void ADontLetHimSeeYouGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	for (int32 i = currentPedos; i < maxPedos; i++)
-		SpawnPedos(i);
+	UGameplayStatics::GetAllActorsWithTag(this, TEXT("Monster Spawn"), SpawnPoints);
+	SpawnMonsters();
+
+	GetWorldTimerManager().SetTimer(SpawnHandle, this, &ADontLetHimSeeYouGameMode::SpawnMonsters, SpawnRate, true);
 }
 
-void ADontLetHimSeeYouGameMode::SpawnPedos(int32 Index)
+void ADontLetHimSeeYouGameMode::SpawnMonsters()
 {
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnPoints_C, SpawnPoints);
-	FVector SpawnPointLocation;
-	FRotator SpawnPointRotation;
-	FActorSpawnParameters SpawnInfo;
-	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnPointLocation = SpawnPoints[Index]->GetActorLocation();
-	SpawnPointRotation = SpawnPoints[Index]->GetActorRotation();
-	GetWorld()->SpawnActor<APedo>(PedoToSpawn_C, SpawnPointLocation, SpawnPointRotation, SpawnInfo);
-	currentPedos++;
+	if (CurrentMonsters < MaxMonsters) {
+		int32 RandomIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
+		FActorSpawnParameters SpawnInfo;
+		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		GetWorld()->SpawnActor<APedo>(PedoToSpawn_C, SpawnPoints[RandomIndex]->GetActorLocation(), SpawnPoints[RandomIndex]->GetActorRotation(), SpawnInfo);
+		CurrentMonsters++;
+	}
 }

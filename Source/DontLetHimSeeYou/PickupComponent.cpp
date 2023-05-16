@@ -60,119 +60,18 @@ FVector UPickupComponent::GetReachLineEnd()
 const FHitResult UPickupComponent::LineTrace()
 {
 	FHitResult HitResult;
-	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner()); // Collision settings
-	auto isHit = GetWorld()->LineTraceSingleByObjectType( // Return true if trace hits something
-		HitResult, // OUT hit result
-		GetReachLineStart(),
-		GetReachLineEnd(),
-		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), // Return true if trace hits a physicsbody collision present
-		TraceParameters
-	);
-	PickUpBattery(HitResult);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(GetOwner());
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(HitResult, GetReachLineStart(), GetReachLineEnd(), ECC_Visibility, QueryParams);
+	if (bIsHit) {
+		if (APickupActor* PickupActor = Cast<APickupActor>(HitResult.GetActor())) {
+			if (ADontLetHimSeeYouCharacter* OwningCharacter = GetOwner<ADontLetHimSeeYouCharacter>()) {
+				PickupActor->OnPickup(OwningCharacter);
+				PickupActor->SetOwner(OwningCharacter);
+				OwningCharacter->AddItemToInventory(PickupActor);
+			}	
+			// Reduce current skill slot
+		}
+	}
 	return HitResult;
-}
-
-void UPickupComponent::PickUpBattery(FHitResult HitResult)
-{
-	auto HitActor = HitResult.GetActor();
-	auto BatteryPickup = Cast<APickupBattery>(HitActor);
-	if (HitActor && BatteryPickup && PickupBatteryVFX != NULL) {
-		HitActor->Destroy(); // Destroy component and increase battery
-							 // Increase the battery of flashlight
-		UGameplayStatics::PlaySoundAtLocation(this, PickupBatteryVFX, BatteryPickup->GetActorLocation());
-		auto Character = Cast<ADontLetHimSeeYouCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-		if (Character) {
-			Character->IncreaseBattery(20);
-			// Increase by time
-		}
-		else UE_LOG(LogTemp, Warning, TEXT("Cast failed"));
-	}
-}
-
-bool UPickupComponent::PickUpSharingan(FHitResult HitResult)
-{
-	auto HitActor = HitResult.GetActor();
-	auto SharinganPickup = Cast<ASharingan>(HitActor);
-	if (numSkill > 0 && bHasAmaterasu == false) {
-		if (HitActor && SharinganPickup) {
-			HitActor->Destroy();
-			bHasAmaterasu = true;
-			ReachDistance = 5000.f;
-			numSkill--;
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	return false;
-}
-
-bool UPickupComponent::PickUpKunai(FHitResult HitResult)
-{
-	auto HitActor = HitResult.GetActor();
-	auto KunaiPickup = Cast<ATeleportationJutsu>(HitActor);
-	if (numSkill > 0 && bHasKunai == false) {
-		if (HitActor && KunaiPickup) {
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, TargetPoints);
-			bHasKunai = true;
-			KunaiPickup->Destroy();
-			numSkill--;
-			return true;
-		}
-		else return false;
-	}
-	return false;
-}
-
-bool UPickupComponent::PickUpRockWallJutsu(FHitResult HitResult)
-{
-	auto HitActor = HitResult.GetActor();
-	auto Acquire = Cast<ARockWallJutsu>(HitActor);
-	if (numSkill > 0 && bHasScroll == false) {
-		if (HitActor && Acquire) {
-			Acquire->Destroy();
-			bHasScroll = true;
-			numSkill--;
-			return true;
-		}
-		else return false;
-	}
-	return false;
-}
-
-void UPickupComponent::Teleport()
-{
-	if (bHasKunai) {
-		int32 Index = FMath::RandRange((int32)0, (int32)TargetPoints.Num());
-		auto TeleLocation = TargetPoints[Index]->GetActorLocation();
-		 GetOwner()->SetActorLocation(TeleLocation);
-		 numSkill++;
-		 bHasKunai = false;
-	}
-}
-
-bool UPickupComponent::ActivateAmaterasu(FHitResult HitResult)
-{
-	auto HitActor = HitResult.GetActor();
-	auto Activation = Cast<APedo>(HitActor);
-	
-	if (HitActor && Activation && bHasAmaterasu) {
-		auto FireRef = Activation->Amaterasu;
-		FireRef->ActivateSystem(true);
-		bHasAmaterasu = false;
-		ReachDistance = 800.f;
-		Activation->bisAlive = false;
-		numSkill++;
-		return true;
-	}
-	else if (HitActor){
-		UE_LOG(LogTemp, Warning, TEXT("Actor hit"));
-		return false;
-	}
-	else if (Activation) {
-		UE_LOG(LogTemp, Warning, TEXT("Cast succeeded"));
-		return false;
-	}
-	else return false;
 }

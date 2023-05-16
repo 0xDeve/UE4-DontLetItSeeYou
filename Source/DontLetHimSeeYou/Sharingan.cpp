@@ -11,6 +11,17 @@ ASharingan::ASharingan()
 
 }
 
+void ASharingan::ActivateSkill_Implementation()
+{
+	//ADontLetHimSeeYouCharacter* OwnerCharacter = GetOwner<()
+}
+
+void ASharingan::OnPickup_Implementation(class ADontLetHimSeeYouCharacter* InInteractor)
+{
+
+	Super::OnPickup_Implementation(InInteractor);
+}
+
 // Called when the game starts or when spawned
 void ASharingan::BeginPlay()
 {

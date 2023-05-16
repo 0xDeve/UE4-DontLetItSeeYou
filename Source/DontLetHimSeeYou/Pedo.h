@@ -26,8 +26,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
-		class UParticleSystemComponent* Amaterasu;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 		bool bisAlive;
 };

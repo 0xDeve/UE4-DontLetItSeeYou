@@ -11,6 +11,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PickupBattery.h"
+#include "PickupActor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ADontLetHimSeeYouCharacter
@@ -34,8 +35,8 @@ ADontLetHimSeeYouCharacter::ADontLetHimSeeYouCharacter()
 	// Create a first person camera component
 	FP_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("First person camera"));
 	FP_Camera->SetupAttachment(GetMesh(), TEXT("FP_Camera"));
-	FP_Camera->RelativeLocation = FVector(0.f, 20.f, 0.f);
-	FP_Camera->RelativeRotation = FRotator(-90.f, 0.f, 90.f);
+	FP_Camera->SetRelativeLocation(FVector(0.f, 20.f, 0.f));
+	FP_Camera->SetRelativeRotation(FRotator(- 90.f, 0.f, 90.f));
 	FP_Camera->bUsePawnControlRotation = true;
 	// Create a flash light component
 	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flash light"));
@@ -45,7 +46,7 @@ ADontLetHimSeeYouCharacter::ADontLetHimSeeYouCharacter()
 	Flashlight->InnerConeAngle = 9.f;
 	Flashlight->OuterConeAngle = 12.3f;
 	Flashlight->SourceLength = 1.f;
-	Flashlight->bVisible = false;
+	Flashlight->SetVisibility(false);
 	//
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -56,8 +57,6 @@ ADontLetHimSeeYouCharacter::ADontLetHimSeeYouCharacter()
 	RecoverySound = CreateDefaultSubobject<UAudioComponent>(TEXT("Recovery sound"));
 	RecoverySound->SetupAttachment(GetMesh(), TEXT("Recovery sound"));
 	RecoverySound->bAutoActivate = false;
-
-	 bisDead = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -116,6 +115,22 @@ void ADontLetHimSeeYouCharacter::Tick(float DeltaTime)
 	}
 	///
 	
+}
+
+void ADontLetHimSeeYouCharacter::AddItemToInventory(APickupActor* InPickupActor)
+{
+	if (CurrentSkills > MaxSkills) {
+		return;
+	}
+	PickedUpActors.Add(InPickupActor);
+	CurrentSkills++;
+}
+
+void ADontLetHimSeeYouCharacter::RemoveItemFromInventory(APickupActor* InItem)
+{
+	if (PickedUpActors.Find(InItem)) {
+		PickedUpActors.Remove(InItem);
+	}
 }
 
 void ADontLetHimSeeYouCharacter::IncreaseBattery(float BatteryEnergy)

@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "PickupActor.h"
 #include "RockWallJutsu.generated.h"
 
 UCLASS()
-class DONTLETHIMSEEYOU_API ARockWallJutsu : public AActor
+class DONTLETHIMSEEYOU_API ARockWallJutsu : public APickupActor
 {
 	GENERATED_BODY()
 	
